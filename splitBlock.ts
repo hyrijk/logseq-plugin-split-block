@@ -1,15 +1,18 @@
 import { IBatchBlock } from "@logseq/libs/dist/LSPlugin.user";
 
 export function splitBlock(blockContent: string) {
-  const lines = blockContent.split('\n');
+  const lines = blockContent.split("\n");
+  if (lines.length === 1) {
+    return [];
+  }
 
   const batchBlock: IBatchBlock[] = [];
-  const indentStack: {
+  const stack: {
     indent: number;
     block: IBatchBlock;
     parent?: IBatchBlock;
   }[] = [];
-  lines.forEach(l => {
+  lines.forEach((l) => {
     const content = l.trimStart();
     const indent = l.length - content.length;
 
@@ -18,16 +21,16 @@ export function splitBlock(blockContent: string) {
       children: [],
     };
 
-    if (!indentStack.length) {
+    if (!stack.length) {
       batchBlock.push(nextBlock);
-      indentStack.push({
+      stack.push({
         indent,
         block: nextBlock,
       });
       return;
     }
 
-    let top = indentStack[indentStack.length - 1];
+    let top = stack[stack.length - 1];
     const indentDiff = indent - top.indent;
 
     if (indentDiff === 0) {
@@ -41,29 +44,43 @@ export function splitBlock(blockContent: string) {
     } else if (indentDiff > 0) {
       // 缩进
       top.block.children!.push(nextBlock);
-      indentStack.push({
+      stack.push({
         indent,
         block: nextBlock,
         parent: top.block,
       });
     } else if (indentDiff < 0) {
       // 反缩进
-      // 找到同一级别的 block 的 parent block 
+      // 找到同一级别的 block 的 parent block
       while (top.indent > indent) {
-        indentStack.pop();
-        if (indentStack.length === 0) {
+        stack.pop();
+        if (stack.length === 0) {
           return;
         }
-        top = indentStack[indentStack.length - 1];
+        top = stack[stack.length - 1];
       }
-      if (top.parent) {
-        top.parent.children!.push(nextBlock);
+
+      if (top.indent === indent) {
+        console.log(top, nextBlock);
+        if (top.parent) {
+          top.parent.children!.push(nextBlock);
+        } else {
+          batchBlock.push(nextBlock);
+        }
+        top.block = nextBlock;
       } else {
-        batchBlock.push(nextBlock);
+        // 缩进没对齐的情况
+        console.log(JSON.stringify(top));
+        top.block.children.push(nextBlock);
+        stack.push({
+          indent,
+          block: nextBlock,
+          parent: top.block,
+        });
       }
-      top.block = nextBlock;
     }
   });
 
-  return batchBlock
+  console.log(JSON.stringify(batchBlock));
+  return batchBlock;
 }
