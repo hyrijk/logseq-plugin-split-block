@@ -1,0 +1,24 @@
+{
+  "name": "logseq-plugin-split-block",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.html",
+  "scripts": {
+    "dev": "parcel ./index.html --public-url ./",
+    "build": "parcel build --public-url . --no-source-maps index.html"
+  },
+  "keywords": [
+    "logseq"
+  ],
+  "author": "hyrijk",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel": "2.0.0-beta.2"
+  },
+  "dependencies": {
+    "@logseq/libs": "^0.0.1-alpha.27"
+  },
+  "logseq": {
+    "id": "_gzgx2ifgg"
+  }
+}
