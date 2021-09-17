@@ -28,7 +28,7 @@ jobs:
       - run: yarn build
       - uses: montudor/action-zip@v1
         with:
-          args: zip -qq -r logseq-plugin-split-block.zip dist demo README.md package.json
+          args: zip -qq -r logseq-plugin-split-block.zip dist demo README.md package.json LICENSE
       - name: Release
         run: npx semantic-release
         env:
