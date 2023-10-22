@@ -1,5 +1,7 @@
 # Logseq Plugin Split Block
 
+Splits multi-line text block into individual blocks.
+
 ## Slash command
 
 ![slash command](./demo/slash-command.gif)
